@@ -1,5 +1,6 @@
 import { LoadFacebookUserApi } from "@/data/contracts/apis";
 import { FacebookAuthenticationService } from "@/data/services";
+import {LoadUserAccountRepository} from '@/data/contracts/repos/'
 import { AuthenticationError } from "@/domain/errors";
 
 class LoadFacebookUserApiSpy implements LoadFacebookUserApi {
@@ -13,10 +14,26 @@ class LoadFacebookUserApiSpy implements LoadFacebookUserApi {
     }
 }
 
+class LoadUserAccountRepositorySpy implements LoadUserAccountRepository {
+    async load(params: LoadUserAccountRepository.Params): Promise<void> {
+
+    }
+}
+
 describe("FacebookAuthenticationService", () => {
+    
+    let loadFacebookUserApi: LoadFacebookUserApiSpy;
+    let loadUserAccountRepository: LoadUserAccountRepositorySpy;
+
+    beforeEach(() => {
+        loadFacebookUserApi = new LoadFacebookUserApiSpy();
+        loadUserAccountRepository = new LoadUserAccountRepositorySpy();
+    });
+
     it("should call LoadFacebookUserApi with correct params", async () => {
-        const loadFacebookUserApi = new LoadFacebookUserApiSpy();
-        const sut = new FacebookAuthenticationService(loadFacebookUserApi);
+        
+      
+        const sut = new FacebookAuthenticationService(loadFacebookUserApi, loadUserAccountRepository);
 
         await sut.perform({
             token: 'any_token'
@@ -29,7 +46,7 @@ describe("FacebookAuthenticationService", () => {
     it("should call LoadFacebookUserApi an returns undefined", async () => {
         const loadFacebookUserApi = new LoadFacebookUserApiSpy();
         loadFacebookUserApi.result = undefined;
-        const sut = new FacebookAuthenticationService(loadFacebookUserApi);
+        const sut = new FacebookAuthenticationService(loadFacebookUserApi,loadUserAccountRepository);
 
         const authResult = await sut.perform({
             token: 'any_token'
