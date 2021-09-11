@@ -69,7 +69,7 @@ describe("FacebookAuthenticationService", () => {
             name: 'any_name'
         });
 
-        await sut.perform({token});
+        await sut.perform({token}); 
 
         expect(userAccountRepo.updateWithFacebook).toHaveBeenCalledWith({
             id: 'any_id',
